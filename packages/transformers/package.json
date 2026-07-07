@@ -1,0 +1,17 @@
+{
+  "name": "@omozoku/transformers",
+  "version": "0.0.1",
+  "private": true,
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@omozoku/types": "workspace:*",
+    "@omozoku/api-clients": "workspace:*"
+  },
+  "devDependencies": {
+    "typescript": "*"
+  }
+}

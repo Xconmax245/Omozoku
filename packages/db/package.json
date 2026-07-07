@@ -1,0 +1,24 @@
+{
+  "name": "@omozoku/db",
+  "version": "0.0.1",
+  "private": true,
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate",
+    "db:studio": "drizzle-kit studio"
+  },
+  "dependencies": {
+    "@omozoku/types": "workspace:*",
+    "dotenv": "^17.4.2",
+    "drizzle-orm": "^0.33.0",
+    "postgres": "^3.4.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "drizzle-kit": "^0.24.0",
+    "typescript": "*"
+  }
+}

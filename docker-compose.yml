@@ -1,0 +1,11 @@
+version: '3.8'
+
+services:
+  consumet-api:
+    image: riimuru/consumet-api:latest
+    container_name: omozoku-consumet-api
+    ports:
+      - '3000:3000'
+    environment:
+      - NODE_ENV=PROD
+    restart: unless-stopped
