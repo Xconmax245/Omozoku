@@ -1,10 +1,16 @@
+// ─── Watch Page (Server Component) ───────────────────────────────────────────
+// Fetches anime metadata + streaming sources server-side, then passes them to
+// the client-side VideoPlayer component.
+
 import { jikanGetAnime } from '@omozoku/api-clients';
 import { transformAnime } from '@omozoku/transformers';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { ArrowLeft, PlayCircle, AlertTriangle, RefreshCw } from 'lucide-react';
+import { ArrowLeft, AlertTriangle, RefreshCw } from 'lucide-react';
 import { headers } from 'next/headers';
 import { OmoButton } from '@/components/ui/OmoButton';
+import WatchClientShell from '@/components/player/WatchClientShell';
+import type { WatchResponse } from '@omozoku/types';
 
 export const runtime = 'nodejs';
 
@@ -12,8 +18,21 @@ async function fetchAnime(id: number) {
   try {
     const res = await jikanGetAnime(id);
     return transformAnime(res);
-  } catch (err) {
+  } catch {
     return null;
+  }
+}
+
+async function fetchSources(host: string, protocol: string, animeId: number, episode: number): Promise<{ data: WatchResponse | null; error: string | null }> {
+  try {
+    const res = await fetch(`${protocol}://${host}/api/watch?animeId=${animeId}&episode=${episode}`, {
+      cache: 'no-store',
+    });
+    const data = await res.json() as WatchResponse & { message?: string };
+    if (!res.ok) return { data: null, error: (data as { message?: string }).message || 'Stream temporarily unavailable.' };
+    return { data, error: null };
+  } catch {
+    return { data: null, error: 'Failed to connect to streaming provider.' };
   }
 }
 
@@ -30,24 +49,10 @@ export default async function WatchPage({
   const anime = await fetchAnime(animeId);
   if (!anime) notFound();
 
-  // Fetch sources internally using absolute URL to hit our own API route
-  // We use headers() to get the host since Server Components require absolute URLs
   const host = headers().get('host') || 'localhost:3001';
   const protocol = process.env.NODE_ENV === 'development' ? 'http' : 'https';
-  
-  let sourceError: string | null = null;
 
-  try {
-    const res = await fetch(`${protocol}://${host}/api/watch?animeId=${animeId}&episode=${episode}`, {
-      cache: 'no-store'
-    });
-    const data = await res.json();
-    if (!res.ok) {
-      sourceError = data.message || 'Stream temporarily unavailable.';
-    }
-  } catch (err) {
-    sourceError = 'Failed to connect to streaming provider.';
-  }
+  const { data: watchResponse, error: sourceError } = await fetchSources(host, protocol, animeId, episode);
 
   return (
     <div className="max-w-screen-2xl mx-auto px-4 md:px-6 lg:px-8 py-6 space-y-6">
@@ -60,7 +65,7 @@ export default async function WatchPage({
       </OmoButton>
 
       {/* Video Player Area */}
-      {sourceError ? (
+      {sourceError || !watchResponse ? (
         <div className="w-full aspect-video bg-bg-surface rounded-card border border-border-subtle flex flex-col items-center justify-center overflow-hidden shadow-sm relative p-6 text-center">
           <div className="w-16 h-16 rounded-full bg-score-red/10 flex items-center justify-center mb-4">
             <AlertTriangle size={32} className="text-score-red" />
@@ -69,8 +74,8 @@ export default async function WatchPage({
             Source Unavailable
           </h3>
           <p className="text-text-secondary font-body max-w-md mb-6">
-            The streaming provider is currently offline or blocking requests. 
-            ({sourceError})
+            The streaming provider could not be reached.{' '}
+            {sourceError && <span className="text-text-primary/70">({sourceError})</span>}
           </p>
           <OmoButton asChild variant="secondary" size="pill">
             <a href={`/watch/${animeId}/${episode}`} className="flex items-center gap-2 font-body font-semibold">
@@ -80,13 +85,15 @@ export default async function WatchPage({
           </OmoButton>
         </div>
       ) : (
-        <div className="w-full aspect-video bg-black rounded-card border border-border-subtle flex flex-col items-center justify-center overflow-hidden shadow-2xl relative">
-          <PlayCircle size={64} className="text-text-secondary opacity-50 mb-4" />
-          <p className="text-text-primary font-display font-bold">Video Player UI Placeholder</p>
-          <p className="text-text-secondary font-body text-sm mt-2">
-            Sources loaded successfully. Player mounting here soon.
-          </p>
-        </div>
+        /* Client shell renders the interactive VideoPlayer */
+        <WatchClientShell
+          watchResponse={watchResponse}
+          animeTitle={anime.title}
+          episode={episode}
+          animeId={animeId}
+          totalEpisodes={anime.episodes ?? undefined}
+          posterUrl={anime.images.webp?.large ?? anime.images.jpg.large ?? undefined}
+        />
       )}
 
       {/* Metadata */}
@@ -99,8 +106,8 @@ export default async function WatchPage({
             {anime.title}
           </h2>
         </div>
-        
-        {/* Next/Prev Navigation Placeholder */}
+
+        {/* Next/Prev Navigation */}
         <div className="flex items-center gap-3">
           {episode > 1 && (
             <OmoButton asChild variant="outline" size="pill">

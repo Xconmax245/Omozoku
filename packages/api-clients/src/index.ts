@@ -4,6 +4,7 @@ export * from './throttle';
 export * from './client';
 export * from './cache';
 export * from './stream-provider';
+export * from './gogo-scraper';
 export * from './jikan';
 export * from './anidb';
 export * from './facts';

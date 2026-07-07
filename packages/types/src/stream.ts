@@ -7,6 +7,7 @@ export interface StreamSource {
   quality: StreamQuality;
   isM3U8: boolean;
   isDub: boolean;
+  isIframe?: boolean;
 }
 
 export interface Subtitle {
