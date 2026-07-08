@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { db, users } from '@omozoku/db';
 import { eq } from 'drizzle-orm';
 
+export const dynamic = 'force-dynamic';
 export async function GET(req: Request) {
   try {
     const { searchParams } = new URL(req.url);
