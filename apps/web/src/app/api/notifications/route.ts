@@ -3,6 +3,8 @@ import { auth } from "@/auth";
 import { db, notifications } from "@omozoku/db";
 import { eq, desc } from "drizzle-orm";
 
+export const dynamic = 'force-dynamic';
+
 export async function GET() {
   try {
     const session = await auth();
