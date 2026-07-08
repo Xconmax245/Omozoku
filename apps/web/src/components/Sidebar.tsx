@@ -8,6 +8,8 @@ import {
   Home,
   Search,
   BookmarkCheck,
+  Compass,
+  MonitorPlay
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { NotificationBell } from './notifications/NotificationBell';
@@ -16,6 +18,8 @@ import { UserProfileButton } from './UserProfileButton';
 
 const NAV_ITEMS = [
   { href: '/', icon: Home, label: 'Home' },
+  { href: '/browse', icon: Compass, label: 'Browse' },
+  { href: '/watch', icon: MonitorPlay, label: 'Watch' },
   { href: '/search', icon: Search, label: 'Search' },
   { href: '/watchlist', icon: BookmarkCheck, label: 'Watchlist' },
 ];

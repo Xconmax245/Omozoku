@@ -22,7 +22,13 @@ type SignInValues = z.infer<typeof signInSchema>;
 export default function SignInPageClient() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const callbackUrl = searchParams.get('callbackUrl') || '/';
+  const rawCallback = searchParams.get('callbackUrl') || '/';
+  // Prevent redirect loops: never send users back to /search or auth pages after login
+  const callbackUrl = (
+    rawCallback.startsWith('/auth') ||
+    rawCallback.startsWith('/search') ||
+    rawCallback === ''
+  ) ? '/' : rawCallback;
   const registered = searchParams.get('registered') === 'true';
   const urlError = searchParams.get('error');
 

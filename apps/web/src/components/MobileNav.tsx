@@ -5,7 +5,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Search, Grid2X2, X, Home, BookmarkCheck } from 'lucide-react';
+import { Search, Grid2X2, X, Home, BookmarkCheck, Compass, MonitorPlay } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { NotificationBell } from './notifications/NotificationBell';
 import { OmoButton } from '@/components/ui/OmoButton';
@@ -13,6 +13,8 @@ import { UserProfileButton } from './UserProfileButton';
 
 const NAV_ITEMS = [
   { href: '/', icon: Home, label: 'Home' },
+  { href: '/browse', icon: Compass, label: 'Browse' },
+  { href: '/watch', icon: MonitorPlay, label: 'Watch' },
   { href: '/search', icon: Search, label: 'Search' },
   { href: '/watchlist', icon: BookmarkCheck, label: 'Watchlist' },
 ];

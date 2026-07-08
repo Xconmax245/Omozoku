@@ -7,7 +7,7 @@ import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { useNotificationStore } from '@/stores/notificationStore';
 import { NotificationPanel } from './NotificationPanel';
 import { NotificationBottomSheet } from './NotificationBottomSheet';
-import { useFloating, shift, flip, offset } from '@floating-ui/react';
+import { useFloating, shift, flip, offset, FloatingPortal } from '@floating-ui/react';
 
 export function NotificationBell() {
   const [isOpen, setIsOpen] = useState(false);
@@ -25,7 +25,7 @@ export function NotificationBell() {
     middleware: [
       offset(16),
       flip({ fallbackPlacements: ['left-end', 'bottom', 'top'] }),
-      shift({ padding: 16 }),
+      shift({ padding: 16, crossAxis: true }),
     ],
   });
 
@@ -98,11 +98,13 @@ export function NotificationBell() {
       {isMobile ? (
         <NotificationBottomSheet isOpen={isOpen} onOpenChange={setIsOpen} />
       ) : (
-        <NotificationPanel 
-          isOpen={isOpen} 
-          floatingRef={refs.setFloating} 
-          style={floatingStyles} 
-        />
+        <FloatingPortal>
+          <NotificationPanel 
+            isOpen={isOpen} 
+            floatingRef={refs.setFloating} 
+            style={{ ...floatingStyles, zIndex: 50 }} 
+          />
+        </FloatingPortal>
       )}
     </div>
   );

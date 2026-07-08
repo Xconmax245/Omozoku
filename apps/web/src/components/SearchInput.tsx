@@ -138,7 +138,7 @@ export function SearchInput() {
                   >
                     <div className="relative w-10 h-14 shrink-0 rounded-[6px] overflow-hidden bg-bg-elevated">
                       {anime.images?.jpg?.small && (
-                        <Image src={anime.images.jpg.small} alt="" fill className="object-cover" sizes="40px" />
+                        <Image src={anime.images.jpg.small} alt={anime.title} fill className="object-cover" sizes="40px" />
                       )}
                     </div>
                     <div className="flex-1 min-w-0 text-left">

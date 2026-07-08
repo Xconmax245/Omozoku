@@ -12,11 +12,6 @@ interface BucketConfig {
   refillRate: number;
 }
 
-interface Bucket {
-  tokens: number;
-  lastRefillMs: number;
-}
-
 const PROVIDER_CONFIGS: Record<string, BucketConfig> = {
   jikan:    { capacity: 2, refillRate: 2 },   // 2/s, burst of 2
   consumet: { capacity: 5, refillRate: 5 },   // permissive — self-hosted
@@ -24,48 +19,51 @@ const PROVIDER_CONFIGS: Record<string, BucketConfig> = {
   default:  { capacity: 10, refillRate: 10 }, // unknown providers: lenient
 };
 
-const buckets = new Map<string, Bucket>();
+interface QueueState {
+  queue: Array<() => void>;
+  isProcessing: boolean;
+  lastExecutionMs: number;
+}
 
-function getBucket(provider: string): { bucket: Bucket; config: BucketConfig } {
+const queues = new Map<string, QueueState>();
+
+function getQueue(provider: string) {
+  if (!queues.has(provider)) {
+    queues.set(provider, { queue: [], isProcessing: false, lastExecutionMs: 0 });
+  }
+  return queues.get(provider)!;
+}
+
+async function processQueue(provider: string, state: QueueState) {
+  if (state.isProcessing) return;
+  state.isProcessing = true;
+
   const config = PROVIDER_CONFIGS[provider] ?? PROVIDER_CONFIGS['default']!;
-  if (!buckets.has(provider)) {
-    buckets.set(provider, { tokens: config.capacity, lastRefillMs: Date.now() });
-  }
-  const bucket = buckets.get(provider)!;
-  return { bucket, config };
-}
+  // refillRate is tokens per second. e.g., 2 tokens/sec means 500ms between requests.
+  const delayMs = 1000 / config.refillRate;
 
-function refill(bucket: Bucket, config: BucketConfig): void {
-  const now = Date.now();
-  const elapsed = (now - bucket.lastRefillMs) / 1_000; // seconds
-  bucket.tokens = Math.min(config.capacity, bucket.tokens + elapsed * config.refillRate);
-  bucket.lastRefillMs = now;
-}
-
-/**
- * Wait until a token is available for `provider`, then consume it.
- * Resolves immediately if a token is available, otherwise waits (max 10s).
- */
-export async function acquireToken(provider: string): Promise<void> {
-  const MAX_WAIT_MS = 10_000;
-  const POLL_MS = 50;
-  const start = Date.now();
-
-  while (true) {
-    const { bucket, config } = getBucket(provider);
-    refill(bucket, config);
-
-    if (bucket.tokens >= 1) {
-      bucket.tokens -= 1;
-      return;
+  while (state.queue.length > 0) {
+    const now = Date.now();
+    const timeSinceLast = now - state.lastExecutionMs;
+    
+    if (timeSinceLast < delayMs) {
+      await new Promise(resolve => setTimeout(resolve, delayMs - timeSinceLast));
     }
 
-    if (Date.now() - start > MAX_WAIT_MS) {
-      console.warn(`[throttle:${provider}] Token wait exceeded ${MAX_WAIT_MS}ms — proceeding anyway to avoid deadlock.`);
-      return;
+    const resolve = state.queue.shift();
+    if (resolve) {
+      state.lastExecutionMs = Date.now();
+      resolve();
     }
-
-    // Wait one poll interval then try again
-    await new Promise((resolve) => setTimeout(resolve, POLL_MS));
   }
+
+  state.isProcessing = false;
+}
+
+export function acquireToken(provider: string): Promise<void> {
+  return new Promise((resolve) => {
+    const state = getQueue(provider);
+    state.queue.push(resolve);
+    processQueue(provider, state);
+  });
 }
