@@ -5,7 +5,6 @@ import {
   primaryKey,
   integer,
   boolean,
-  jsonb,
   index,
 } from 'drizzle-orm/pg-core';
 import type { AdapterAccountType } from 'next-auth/adapters';

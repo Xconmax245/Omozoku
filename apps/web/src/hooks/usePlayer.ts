@@ -78,7 +78,7 @@ export function usePlayer({ sources, referer, animeId, episode, initialTime = 0,
     } catch (e) {
       console.warn('Failed to save progress', e);
     }
-  }, [animeId, episode]);
+  }, [animeId, episode, shouldSaveProgress]);
 
   // Init Player
   const initPlayer = useCallback(async () => {

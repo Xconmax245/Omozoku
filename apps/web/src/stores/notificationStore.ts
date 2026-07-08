@@ -1,6 +1,5 @@
 /* eslint-disable */
 import { create } from 'zustand';
-import { ReactNode } from 'react';
 
 export type NotificationType =
   | 'build_update'
