@@ -176,11 +176,6 @@ export default function HomePage() {
             
             {/* Left side: Copy */}
             <div className="max-w-xl">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-white/10 bg-white/5 text-xs font-display font-bold tracking-widest uppercase mb-6 text-white/70">
-                <span className="w-1.5 h-1.5 rounded-full bg-accent animate-pulse" />
-                Solo Project
-              </div>
-              
               <h2 className="text-3xl md:text-5xl font-display font-extrabold text-white mb-4 tracking-tight leading-[1.1]">
                 Built by one dev.<br />
                 For the entire tribe.
