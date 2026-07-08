@@ -163,6 +163,7 @@ export default function VideoPlayer({
           src={currentSource.url}
           className="player-video"
           allowFullScreen
+          sandbox="allow-scripts allow-same-origin"
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
           style={{ width: '100%', height: '100%', border: 'none', aspectRatio: '16/9' }}
         />
