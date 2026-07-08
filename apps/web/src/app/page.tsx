@@ -156,35 +156,55 @@ export default function HomePage() {
         />
       </section>
 
-      {/* ─── Support the Tribe ────────────────────────────────────────────── */}
-      <section className="mt-16 md:mt-24">
-        <div className="bg-bg-surface rounded-card border border-border-subtle p-8 md:p-12 flex flex-col md:flex-row items-center justify-between gap-8 relative overflow-hidden">
-          {/* Subtle background glow */}
-          <div className="absolute -top-24 -right-24 w-64 h-64 bg-accent/10 rounded-full blur-[80px] pointer-events-none" />
+      {/* ─── Support the Creator (Premium Redesign) ───────────────────────── */}
+      <section className="mt-20 md:mt-32 mb-12">
+        <a 
+          href="https://x.com/0nyxexe" 
+          target="_blank" 
+          rel="noopener noreferrer"
+          className="group block relative w-full rounded-3xl overflow-hidden bg-bg-surface border border-white/5 transition-all duration-500 hover:border-white/10"
+        >
+          {/* Grain overlay for texture */}
+          <div className="absolute inset-0 opacity-[0.03] mix-blend-overlay" style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.65%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22/%3E%3C/svg%3E")' }} />
           
-          <div className="max-w-xl relative z-10 text-center md:text-left">
-            <h2 className="text-2xl md:text-3xl font-display font-extrabold text-text-primary mb-3">
-              Support the Creator
-            </h2>
-            <p className="text-text-secondary font-body leading-relaxed">
-              Yo, I&apos;m NYX!! and I build OmoZoku entirely solo. No corporate backing, no paywalls, just a passion project for the community. If you&apos;re vibing with the site and want to support its future, dropping a follow on X is the best way to do it. It means a lot!
-            </p>
+          {/* Huge typography texture */}
+          <div className="absolute -bottom-10 -right-10 select-none pointer-events-none opacity-5 group-hover:opacity-10 transition-opacity duration-700">
+            <span className="text-[12rem] md:text-[20rem] font-display font-extrabold leading-none tracking-tighter">NYX</span>
           </div>
-          
-          <div className="relative z-10 shrink-0">
-            <a 
-              href="https://x.com/0nyxexe" 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-accent hover:bg-accent/90 text-white rounded-full font-body font-bold transition-all hover:scale-105 active:scale-95 shadow-[0_0_20px_rgba(255,45,85,0.3)]"
-            >
-              <svg viewBox="0 0 24 24" aria-hidden="true" className="w-5 h-5 fill-current">
-                <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"></path>
-              </svg>
-              Follow @0nyxexe
-            </a>
+
+          <div className="relative z-10 p-8 md:p-14 flex flex-col md:flex-row justify-between items-start md:items-end gap-12">
+            
+            {/* Left side: Copy */}
+            <div className="max-w-xl">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-white/10 bg-white/5 text-xs font-display font-bold tracking-widest uppercase mb-6 text-white/70">
+                <span className="w-1.5 h-1.5 rounded-full bg-accent animate-pulse" />
+                Solo Project
+              </div>
+              
+              <h2 className="text-3xl md:text-5xl font-display font-extrabold text-white mb-4 tracking-tight leading-[1.1]">
+                Built by one dev.<br />
+                For the entire tribe.
+              </h2>
+              
+              <p className="text-text-secondary font-body text-base md:text-lg leading-relaxed max-w-md">
+                No corporate backing, no paywalls. If you vibe with OmoZoku and want to see what&apos;s next, dropping a follow on X is the easiest way to support it. 
+              </p>
+            </div>
+
+            {/* Right side: Button/CTA */}
+            <div className="shrink-0 pb-2">
+              <div className="flex items-center gap-4 text-white group-hover:text-accent transition-colors duration-300 font-display font-bold text-lg md:text-xl">
+                <span>Follow @0nyxexe</span>
+                <div className="w-12 h-12 rounded-full border border-white/20 flex items-center justify-center group-hover:border-accent group-hover:bg-accent/10 transition-all duration-300">
+                  <svg viewBox="0 0 24 24" aria-hidden="true" className="w-5 h-5 fill-current">
+                    <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"></path>
+                  </svg>
+                </div>
+              </div>
+            </div>
+
           </div>
-        </div>
+        </a>
       </section>
     </div>
   );
