@@ -49,5 +49,11 @@ const nextAuth = NextAuth({
     })
   ],
 });
-
-export const { handlers, auth, signIn, signOut } = nextAuth;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const handlers: any = nextAuth.handlers;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const auth: any = nextAuth.auth;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const signIn: any = nextAuth.signIn;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const signOut: any = nextAuth.signOut;
