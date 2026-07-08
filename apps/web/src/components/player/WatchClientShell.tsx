@@ -49,6 +49,7 @@ export default function WatchClientShell({
     <VideoPlayer
       watchResponse={watchResponse}
       animeTitle={animeTitle}
+      animeId={animeId}
       episode={episode}
       posterUrl={posterUrl}
       onNextEpisode={!totalEpisodes || episode < totalEpisodes ? handleNextEpisode : undefined}
