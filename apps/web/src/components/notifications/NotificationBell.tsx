@@ -15,14 +15,15 @@ export function NotificationBell() {
   const wrapperRef = useRef<HTMLDivElement>(null);
   
   const unreadCount = useNotificationStore(state => state.unreadCount());
-  const fetchNotifications = useNotificationStore(state => state.fetchNotifications);
-  const { data: session } = useSession();
+  const startPolling = useNotificationStore(state => state.startPolling);
+  const stopPolling = useNotificationStore(state => state.stopPolling);
 
   useEffect(() => {
-    if (session?.user) {
-      fetchNotifications();
-    }
-  }, [session, fetchNotifications]);
+    startPolling();
+    return () => {
+      stopPolling();
+    };
+  }, [startPolling, stopPolling]);
 
   // Click outside for desktop panel
   useEffect(() => {

@@ -1,43 +1,52 @@
-import { NextResponse } from "next/server";
-import { auth } from "@/auth";
-import { db, notifications } from "@omozoku/db";
-import { eq, desc } from "drizzle-orm";
+import { NextRequest, NextResponse } from 'next/server';
+import { db } from '@omozoku/db';
+import { notifications, userNotificationReads } from '@omozoku/db/src/schema';
+import { desc, asc, eq, or, isNull, and } from 'drizzle-orm';
+import { cookies } from 'next/headers';
 
 export const dynamic = 'force-dynamic';
 
-export async function GET() {
-  try {
-    const session = await auth();
-    if (!session?.user?.id) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
-    const items = await db.query.notifications.findMany({
-      where: eq(notifications.userId, session.user.id),
-      orderBy: [desc(notifications.createdAt)],
-      limit: 50,
-    });
-
-    return NextResponse.json(items);
-  } catch (error) {
-    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
-  }
+function getGuestId(): string | null {
+  const cookieStore = cookies();
+  return cookieStore.get('omo_guest_id')?.value || null;
 }
 
-export async function POST() {
+export async function GET(request: NextRequest): Promise<NextResponse> {
   try {
-    const session = await auth();
-    if (!session?.user?.id) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    // Phase 1: Pre-auth we use the guest ID
+    const userId = getGuestId();
+    
+    // Fetch notifications:
+    // 1. Global broadcasts (userId is NULL)
+    // 2. User-specific notifications (userId === current userId)
+    let query;
+    if (userId) {
+      query = db.select()
+        .from(notifications)
+        .where(
+          or(
+            isNull(notifications.userId),
+            eq(notifications.userId, userId)
+          )
+        )
+        // Priority 0 = normal, 9999 = pinned last. So asc(priority) makes 9999 appear last.
+        // desc(createdAt) sorts newest first within each priority bucket.
+        .orderBy(asc(notifications.priority), desc(notifications.createdAt));
+    } else {
+      query = db.select()
+        .from(notifications)
+        .where(isNull(notifications.userId))
+        .orderBy(asc(notifications.priority), desc(notifications.createdAt));
     }
 
-    // Mark all as read
-    await db.update(notifications)
-      .set({ isRead: true })
-      .where(eq(notifications.userId, session.user.id));
+    const allNotifications = await query;
 
-    return NextResponse.json({ success: true });
+    // For V1 (anonymous), read-state is entirely managed client-side in localStorage.
+    // For authenticated users in Phase 2, we would join userNotificationReads here.
+    return NextResponse.json({ notifications: allNotifications });
+
   } catch (error) {
-    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+    console.error('Error fetching notifications:', error);
+    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 }

@@ -6,6 +6,7 @@ import {
   integer,
   boolean,
   jsonb,
+  index,
 } from 'drizzle-orm/pg-core';
 import type { AdapterAccountType } from 'next-auth/adapters';
 
@@ -78,16 +79,26 @@ export const watchlists = pgTable('watchlist', {
 
 export const notifications = pgTable('notification', {
   id: text('id').primaryKey().$defaultFn(() => crypto.randomUUID()),
-  userId: text('userId')
-    .notNull()
-    .references(() => users.id, { onDelete: 'cascade' }),
-  type: text('type').notNull(), // e.g., 'new_episode', 'new_season', 'watchlist_reminder'
+  userId: text('userId'), // Nullable - null means global broadcast
+  type: text('type').notNull(), // "build_update", "new_anime", "support_creator", "system"
   title: text('title').notNull(),
-  message: text('message').notNull(),
-  isRead: boolean('isRead').notNull().default(false),
-  metaData: jsonb('metaData'), // { animeId: 123, episodeNumber: 5, imageUrl: '...' }
+  body: text('body').notNull(),
+  linkUrl: text('linkUrl'),
+  icon: text('icon'),
   createdAt: timestamp('createdAt', { mode: 'date' }).defaultNow().notNull(),
-});
+  isDismissible: boolean('isDismissible').default(true).notNull(),
+  priority: integer('priority').default(0).notNull(), // 0 = normal chronological, 9999 = always-pinned-last
+}, (table) => ({
+  userIdCreatedAtIdx: index('notification_user_id_created_at_idx').on(table.userId, table.createdAt),
+}));
+
+export const userNotificationReads = pgTable('user_notification_read', {
+  userId: text('userId').notNull().references(() => users.id, { onDelete: 'cascade' }),
+  notificationId: text('notificationId').notNull().references(() => notifications.id, { onDelete: 'cascade' }),
+  readAt: timestamp('readAt', { mode: 'date' }).defaultNow().notNull(),
+}, (table) => ({
+  pk: primaryKey({ columns: [table.userId, table.notificationId] }),
+}));
 
 export const watchProgress = pgTable('watch_progress', {
   id: text('id').primaryKey().$defaultFn(() => crypto.randomUUID()),
