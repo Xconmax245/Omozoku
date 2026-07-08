@@ -8,6 +8,8 @@ export async function GET(req: NextRequest) {
   const { searchParams } = req.nextUrl;
   const animeId = Number(searchParams.get('animeId'));
   const episode = Number(searchParams.get('episode'));
+  const title = searchParams.get('title') || undefined;
+  const titleEnglish = searchParams.get('titleEnglish') || undefined;
 
   if (isNaN(animeId) || isNaN(episode) || episode < 1) {
     return NextResponse.json(
@@ -26,7 +28,7 @@ export async function GET(req: NextRequest) {
 
   try {
     const provider = getStreamProvider();
-    const episodeId = await provider.resolveEpisodeId(animeId, episode);
+    const episodeId = await provider.resolveEpisodeId(animeId, episode, title, titleEnglish);
     const watchResponse = await provider.getSources(episodeId);
 
     // Cache at short TTL — stream URLs expire

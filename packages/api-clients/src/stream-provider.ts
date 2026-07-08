@@ -14,7 +14,7 @@ export interface StreamProvider {
    * Resolve the internal anime ID (MAL/Jikan ID) to a provider-specific
    * episode ID that can be used to fetch sources.
    */
-  resolveEpisodeId(animeId: number, episode: number): Promise<string>;
+  resolveEpisodeId(animeId: number, episode: number, fallbackTitle?: string, fallbackTitleEnglish?: string): Promise<string>;
 
   /**
    * Fetch streaming sources for a given provider episode ID.
@@ -26,10 +26,21 @@ export interface StreamProvider {
 // Resolves via the scraper in gogo-scraper.ts using Node crypto (no Docker needed).
 
 export class LocalGogoStreamProvider implements StreamProvider {
-  async resolveEpisodeId(animeId: number, episode: number): Promise<string> {
-    // Step 1: Get anime metadata (title) from Jikan (MAL)
-    const animeData = await jikanGetAnime(animeId);
-    const title = animeData.title_english ?? animeData.title;
+  async resolveEpisodeId(animeId: number, episode: number, fallbackTitle?: string, fallbackTitleEnglish?: string): Promise<string> {
+    let title = fallbackTitleEnglish ?? fallbackTitle;
+    let romajiTitle = fallbackTitle;
+
+    // Only fetch from Jikan if we didn't receive fallbacks
+    if (!title || !romajiTitle) {
+      try {
+        const animeData = await jikanGetAnime(animeId);
+        title = animeData.title_english ?? animeData.title;
+        romajiTitle = animeData.title;
+      } catch (err) {
+        throw new SourceUnavailableError('gogoanime', `Cannot determine title for MAL ID ${animeId} (Jikan fetch failed)`);
+      }
+    }
+
     if (!title) {
       throw new SourceUnavailableError('gogoanime', `Cannot determine title for MAL ID ${animeId}`);
     }
@@ -38,9 +49,12 @@ export class LocalGogoStreamProvider implements StreamProvider {
     const results = await gogoSearch(title);
     if (!results.length) {
       // Fallback: try romaji title
-      const romajiResults = await gogoSearch(animeData.title);
-      if (!romajiResults.length) {
+      if (!romajiTitle) {
         throw new SourceUnavailableError('gogoanime', `No search results for "${title}" (MAL ID: ${animeId})`);
+      }
+      const romajiResults = await gogoSearch(romajiTitle);
+      if (!romajiResults.length) {
+        throw new SourceUnavailableError('gogoanime', `No search results for "${title}" or "${romajiTitle}" (MAL ID: ${animeId})`);
       }
       return this._resolveFromResults(romajiResults, animeId, episode);
     }
@@ -98,7 +112,7 @@ export class ConsumetStreamProvider implements StreamProvider {
     // no-op: this provider is disabled. Use LocalGogoStreamProvider instead.
   }
 
-  async resolveEpisodeId(_animeId: number, _episode: number): Promise<string> {
+  async resolveEpisodeId(_animeId: number, _episode: number, _fallbackTitle?: string, _fallbackTitleEnglish?: string): Promise<string> {
     throw new SourceUnavailableError('consumet', 'Consumet provider is not the active provider. Use LocalGogoStreamProvider.');
   }
 

@@ -11,12 +11,13 @@
 //
 // Key reference: @consumet/extensions GogoCDN extractor
 //   key:        37911490979715163134003223491201
+
 //   secondKey:  54674138327930866480207815084989
 //   iv:         3134003223491201
 
 import * as crypto from 'crypto';
 import type { WatchResponse, StreamSource } from '@omozoku/types';
-import { SourceUnavailableError } from './errors';
+import { SourceUnavailableError, NotFoundError } from './errors';
 
 // ─── Constants (env-overridable) ──────────────────────────────────────────────
 
@@ -158,40 +159,39 @@ export async function gogoGetEpisodes(animeSlug: string): Promise<GogoEpisode[]>
   const categoryUrl = `${GOGO_BASE}/category/${animeSlug}`;
   const html = await gogoFetch(categoryUrl, GOGO_BASE);
 
-  // The category page embeds ep links directly:
-  // <a href="/naruto-episode-1" ep_start="1" ep_end="1">1</a>
-  // We match href="/<slug>-episode-<n>" patterns from the #episode_page section
-  const epLinks = allMatches(html, /href="\/([\w-]+-episode-\d+)"/);
+  // Safely extract the episode list block to avoid matching "Recent Releases" sidebar
+  const loadEpHtml = html.match(/id="load_ep"[\s\S]*?<\/ul>/)?.[0] ?? '';
+  let epLinks = allMatches(loadEpHtml, /href="\/([\w-]+-episode-\d+(?:\.\d+)?)"/);
 
   if (epLinks.length === 0) {
-    // Fallback: try to read movie_id and call AJAX (for sites where the AJAX isn't blocked)
-    const movieId = attr(html, /id="movie_id"[^>]*value="(\d+)"/);
+    // Fallback to AJAX if the episodes aren't pre-rendered in the HTML
+    let movieId = attr(html, /id="movie_id"[^>]*value="(\d+)"/);
+    if (!movieId) movieId = attr(html, /value="(\d+)"[^>]*id="movie_id"/);
+    
     if (!movieId) {
-      console.error(`[gogo-scraper] gogoGetEpisodes("${animeSlug}"): no episode links and no movie_id. html length=${html.length}`);
+      console.error(`[gogo-scraper] gogoGetEpisodes("${animeSlug}"): no movie_id found. html length=${html.length}`);
       throw new SourceUnavailableError('gogoanime', `No episodes found for "${animeSlug}"`);
     }
 
-    // Extract ep_start/ep_end from episode pagination
-    const epStart = attr(html, /ep_start="(\d+)"/) ?? '0';
-    const epEnd   = attr(html, /ep_end="(\d+)"/)   ?? '0';
+    let epStart = attr(html, /ep_start="(\d+)"/) ?? attr(html, /value="(\d+)"[^>]*id="ep_start"/) ?? '0';
+    let epEnd   = attr(html, /ep_end="(\d+)"/)   ?? attr(html, /value="(\d+)"[^>]*id="ep_end"/)   ?? '10000';
+    let alias   = attr(html, /alias_anime="([^"]+)"/) ?? attr(html, /value="([^"]+)"[^>]*id="alias_anime"/) ?? animeSlug;
 
     try {
-      const ajaxUrl = `${GOGO_AJAX}/ajax/load-list-episode?ep_start=${epStart}&ep_end=${epEnd}&id=${movieId}&default_ep=0`;
-      const data = await gogoFetchJson<{ html: string }>(ajaxUrl, categoryUrl);
-      const ajaxEpLinks = allMatches(data.html, /href="\/([\w-]+-episode-\d+)"/);
-      if (ajaxEpLinks.length > 0) {
-        return parseEpisodeLinks(ajaxEpLinks).reverse();
-      }
-    } catch {
-      // AJAX also blocked; fall through
+      const ajaxUrl = `${GOGO_AJAX}/ajax/load-list-episode?ep_start=${epStart}&ep_end=${epEnd}&id=${movieId}&default_ep=0&alias=${alias}`;
+      const dataHtml = await gogoFetch(ajaxUrl, categoryUrl);
+      epLinks = allMatches(dataHtml, /href="\/([\w-]+-episode-\d+(?:\.\d+)?)"/);
+    } catch (err) {
+      console.error(`[gogo-scraper] AJAX episode fetch failed for ${animeSlug}:`, err);
     }
-
-    throw new SourceUnavailableError('gogoanime', `Cannot resolve episode list for "${animeSlug}"`);
   }
 
-  // Remove duplicates and sort
+  if (epLinks.length === 0) {
+    throw new NotFoundError('gogoanime', `Episodes for "${animeSlug}" are not yet available or not found on the provider.`);
+  }
+
   const unique = [...new Set(epLinks)];
-  return parseEpisodeLinks(unique).reverse();
+  return parseEpisodeLinks(unique).reverse(); // reverse to get Ep 1 first
 }
 
 function parseEpisodeLinks(links: string[]): GogoEpisode[] {
@@ -411,4 +411,6 @@ async function handleGogoPlayChain(
     headers: { Referer: embed.toString(), Origin: `${embed.protocol}//${embed.hostname}` },
   };
 }
+
+
 
