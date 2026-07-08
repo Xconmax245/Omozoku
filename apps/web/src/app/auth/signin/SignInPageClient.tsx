@@ -67,13 +67,30 @@ export default function SignInPageClient() {
         callbackUrl,
       });
 
-      if (res?.error) {
+      if (!res) {
+        // signIn returned nothing — likely a fetch failure or network error
+        setServerError('Could not reach the authentication server. Please try again.');
+        setIsSubmitting(false);
+        return;
+      }
+
+      if (res.error) {
         setServerError('Invalid email or password.');
         setIsSubmitting(false);
-      } else if (res?.ok) {
-        router.push(callbackUrl);
+        return;
       }
+
+      if (res.ok) {
+        router.push(callbackUrl);
+        return;
+      }
+
+      // Catch-all: response doesn't match expected shape, but we shouldn't hang
+      console.warn('[auth] Unexpected signIn response:', res);
+      setServerError('An unexpected error occurred. Please try again.');
+      setIsSubmitting(false);
     } catch (err) {
+      console.error('[auth] signIn threw an error:', err);
       setServerError('An unexpected error occurred. Please try again.');
       setIsSubmitting(false);
     }
