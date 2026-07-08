@@ -50,7 +50,4 @@ const nextAuth = NextAuth({
   ],
 });
 
-export const handlers: any = nextAuth.handlers;
-export const auth: any = nextAuth.auth;
-export const signIn: any = nextAuth.signIn;
-export const signOut: any = nextAuth.signOut;
+export const { handlers, auth, signIn, signOut } = nextAuth;

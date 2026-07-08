@@ -3,7 +3,7 @@ import { jikanGetEpisodes } from '@omozoku/api-clients';
 
 export const runtime = 'nodejs';
 
-export async function GET(req: NextRequest) {
+export async function GET(req: NextRequest): Promise<NextResponse> {
   const { searchParams } = new URL(req.url);
   const animeId = Number(searchParams.get('animeId'));
   const page = Number(searchParams.get('page')) || 1;

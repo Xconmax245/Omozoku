@@ -4,7 +4,7 @@ import { transformAnime } from '@omozoku/transformers';
 
 export const runtime = 'nodejs';
 
-export async function GET(req: NextRequest) {
+export async function GET(req: NextRequest): Promise<NextResponse> {
   const { searchParams } = new URL(req.url);
   const animeId = Number(searchParams.get('animeId'));
 
@@ -15,6 +15,7 @@ export async function GET(req: NextRequest) {
   try {
     const raw = await jikanGetRecommendations(animeId);
     // Transform recommendations
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const data = raw.data.slice(0, 15).map((r) => transformAnime(r.entry as any));
     return NextResponse.json({ data }, {
       headers: {
