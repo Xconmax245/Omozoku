@@ -7,9 +7,7 @@ import { motion } from 'framer-motion';
 import {
   Home,
   Search,
-  Compass,
   BookmarkCheck,
-  Tv2,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { NotificationBell } from './notifications/NotificationBell';

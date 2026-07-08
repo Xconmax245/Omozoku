@@ -5,7 +5,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Search, Grid2X2, X, Home, Compass, BookmarkCheck, Tv2 } from 'lucide-react';
+import { Search, Grid2X2, X, Home, BookmarkCheck } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { NotificationBell } from './notifications/NotificationBell';
 import { OmoButton } from '@/components/ui/OmoButton';
