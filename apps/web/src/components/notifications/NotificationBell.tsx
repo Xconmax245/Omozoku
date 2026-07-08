@@ -7,7 +7,7 @@ import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { useNotificationStore } from '@/stores/notificationStore';
 import { NotificationPanel } from './NotificationPanel';
 import { NotificationBottomSheet } from './NotificationBottomSheet';
-import { useSession } from 'next-auth/react';
+import { useFloating, shift, flip, offset } from '@floating-ui/react';
 
 export function NotificationBell() {
   const [isOpen, setIsOpen] = useState(false);
@@ -17,6 +17,17 @@ export function NotificationBell() {
   const unreadCount = useNotificationStore(state => state.unreadCount());
   const startPolling = useNotificationStore(state => state.startPolling);
   const stopPolling = useNotificationStore(state => state.stopPolling);
+
+  const { refs, floatingStyles } = useFloating({
+    open: isOpen,
+    onOpenChange: setIsOpen,
+    placement: 'right-end',
+    middleware: [
+      offset(16),
+      flip({ fallbackPlacements: ['left-end', 'bottom', 'top'] }),
+      shift({ padding: 16 }),
+    ],
+  });
 
   useEffect(() => {
     startPolling();
@@ -29,16 +40,20 @@ export function NotificationBell() {
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (!isMobile && isOpen && wrapperRef.current && !wrapperRef.current.contains(event.target as Node)) {
+        if (refs.floating.current && refs.floating.current.contains(event.target as Node)) {
+          return;
+        }
         setIsOpen(false);
       }
     }
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, [isOpen, isMobile]);
+  }, [isOpen, isMobile, refs.floating]);
 
   return (
     <div className="relative" ref={wrapperRef}>
       <motion.button
+        ref={refs.setReference}
         onClick={() => setIsOpen(!isOpen)}
         whileHover={{ scale: 1.04 }}
         whileTap={{ scale: 0.96 }}
@@ -83,7 +98,11 @@ export function NotificationBell() {
       {isMobile ? (
         <NotificationBottomSheet isOpen={isOpen} onOpenChange={setIsOpen} />
       ) : (
-        <NotificationPanel isOpen={isOpen} />
+        <NotificationPanel 
+          isOpen={isOpen} 
+          floatingRef={refs.setFloating} 
+          style={floatingStyles} 
+        />
       )}
     </div>
   );

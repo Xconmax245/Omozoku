@@ -8,24 +8,28 @@ import Link from 'next/link';
 
 interface NotificationPanelProps {
   isOpen: boolean;
+  floatingRef?: (node: HTMLElement | null) => void;
+  style?: React.CSSProperties;
 }
 
-export function NotificationPanel({ isOpen }: NotificationPanelProps) {
+export function NotificationPanel({ isOpen, floatingRef, style }: NotificationPanelProps) {
   const { notifications, markAllRead, markRead } = useNotificationStore();
 
   return (
     <AnimatePresence>
       {isOpen && (
         <motion.div
+          ref={floatingRef}
+          style={style}
           initial={{ opacity: 0, scale: 0.95, y: -10 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.95, y: -10 }}
           transition={{ duration: 0.15, ease: 'easeOut' }}
-          className="absolute right-0 top-14 w-80 sm:w-96 bg-bg-surface border border-border-subtle rounded-card shadow-2xl z-50 overflow-hidden"
+          className="absolute w-80 sm:w-96 bg-bg-surface border border-border-subtle rounded-card shadow-2xl z-50 flex flex-col max-h-[70vh] overflow-hidden"
           id="notification-panel"
         >
           {/* Header */}
-          <div className="flex items-center justify-between px-4 py-3 border-b border-border-subtle bg-bg-elevated/50 backdrop-blur-md">
+          <div className="flex items-center justify-between px-4 py-3 border-b border-border-subtle bg-bg-elevated/50 backdrop-blur-md shrink-0">
             <h3 className="font-display font-bold text-text-primary">Notifications</h3>
             {notifications.some(n => !n.read) && (
               <button
@@ -39,7 +43,7 @@ export function NotificationPanel({ isOpen }: NotificationPanelProps) {
           </div>
 
           {/* List */}
-          <div className="max-h-[400px] overflow-y-auto overscroll-contain">
+          <div className="flex-1 overflow-y-auto overscroll-contain">
             {notifications.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-12 px-4 text-center">
                 <div className="w-12 h-12 rounded-full bg-bg-elevated flex items-center justify-center mb-3">

@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@auth/drizzle-adapter": "^1.11.2",
+    "@floating-ui/react": "^0.27.19",
     "@hookform/resolvers": "^5.4.0",
     "@omozoku/api-clients": "workspace:*",
     "@omozoku/db": "workspace:*",
