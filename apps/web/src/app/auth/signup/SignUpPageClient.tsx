@@ -9,6 +9,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useDebounce } from 'use-debounce';
+import { signIn } from 'next-auth/react';
 import { Eye, EyeOff, Check, X, AlertCircle, Loader2 } from 'lucide-react';
 
 const signUpSchema = z.object({
@@ -135,8 +136,19 @@ export default function SignUpPageClient() {
         return;
       }
 
-      // Registration successful, redirect to signin
-      router.push('/auth/signin?registered=true');
+      // Registration successful — auto-sign-in the user
+      const signInRes = await signIn('credentials', {
+        redirect: false,
+        email: data.email,
+        password: data.password,
+      });
+
+      if (signInRes?.ok) {
+        router.push('/');
+      } else {
+        // Auto sign-in failed — redirect to sign-in page so they can try manually
+        router.push('/auth/signin?registered=true');
+      }
     } catch (err) {
       setServerError('Network error. Please try again.');
       setIsSubmitting(false);
