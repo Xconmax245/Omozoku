@@ -164,7 +164,7 @@ export default function HomePage() {
               Support the Tribe
             </h2>
             <p className="text-text-secondary font-body leading-relaxed">
-              OmoZoku is a solo-built, entirely free sanctuary for anime fans. If you love what I'm building, the absolute best way to support future development and new features is to follow along on X.
+              OmoZoku is a solo-built, entirely free sanctuary for anime fans. If you love what I&apos;m building, the absolute best way to support future development and new features is to follow along on X.
             </p>
           </div>
           

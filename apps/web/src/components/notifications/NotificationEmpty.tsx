@@ -7,8 +7,8 @@ export function NotificationEmpty() {
         <Bell className="text-white/40" size={24} />
       </div>
       <div>
-        <p className="text-white font-bold mb-1">You're all caught up.</p>
-        <p className="text-sm text-white/50">We'll notify you when something new happens.</p>
+        <p className="text-white font-bold mb-1">You&apos;re all caught up.</p>
+        <p className="text-sm text-white/50">We&apos;ll notify you when something new happens.</p>
       </div>
     </div>
   );

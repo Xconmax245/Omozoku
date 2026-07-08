@@ -69,7 +69,7 @@ export default async function SearchPage({
         <div className="flex items-center gap-2 mb-6" data-aos="fade-up">
           {query ? (
             <h2 className="text-2xl font-display font-extrabold text-text-primary">
-              Results for <span className="text-accent">"{query}"</span>
+              Results for <span className="text-accent">&quot;{query}&quot;</span>
             </h2>
           ) : (
             <>

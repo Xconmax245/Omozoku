@@ -41,7 +41,7 @@ export default function NotFound() {
           transition={{ duration: 0.6, delay: 0.2 }}
           className="text-text-secondary font-body text-lg mb-10"
         >
-          It looks like the anime or page you're looking for doesn't exist, or has slipped into another dimension. Let's get you back to the tribe.
+          It looks like the anime or page you&apos;re looking for doesn&apos;t exist, or has slipped into another dimension. Let&apos;s get you back to the tribe.
         </motion.p>
 
         <motion.div

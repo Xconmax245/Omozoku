@@ -157,7 +157,8 @@ export default function SignUpPageClient() {
       >
         <div className="flex flex-col items-center mb-8">
           <Link href="/" className="mb-6 hover:scale-105 transition-transform active:scale-95">
-            <img src="/images/logo.png" alt="OmoZoku" className="h-16 w-auto object-contain drop-shadow-md" />
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/images/logo.png" alt="OmoZoku" className="w-12 h-12 object-contain drop-shadow-[0_0_15px_rgba(255,45,85,0.3)] mx-auto" />
           </Link>
           <h1 className="text-3xl font-display font-extrabold text-white mb-2 tracking-tight">Create your account</h1>
           <p className="text-text-secondary text-sm">Join the tribe and build your watchlist.</p>
