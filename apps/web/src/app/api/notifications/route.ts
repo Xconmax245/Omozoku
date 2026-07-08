@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@omozoku/db';
-import { notifications, userNotificationReads } from '@omozoku/db/src/schema';
-import { desc, asc, eq, or, isNull, and } from 'drizzle-orm';
+import { notifications } from '@omozoku/db/src/schema';
+import { desc, asc, eq, or, isNull } from 'drizzle-orm';
 import { cookies } from 'next/headers';
 
 export const dynamic = 'force-dynamic';
@@ -11,7 +11,7 @@ function getGuestId(): string | null {
   return cookieStore.get('omo_guest_id')?.value || null;
 }
 
-export async function GET(request: NextRequest): Promise<NextResponse> {
+export async function GET(_request: NextRequest): Promise<NextResponse> {
   try {
     // Phase 1: Pre-auth we use the guest ID
     const userId = getGuestId();

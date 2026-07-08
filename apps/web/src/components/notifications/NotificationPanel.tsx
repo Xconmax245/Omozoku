@@ -2,7 +2,7 @@
 
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNotificationStore, Notification, NotificationType } from '@/stores/notificationStore';
-import { Check, CheckCircle2, Hammer, Sparkles, X, Info } from 'lucide-react';
+import { Check, CheckCircle2, Hammer, Sparkles, Info } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import Link from 'next/link';
 
@@ -49,7 +49,7 @@ export function NotificationPanel({ isOpen, floatingRef, style }: NotificationPa
                 <div className="w-12 h-12 rounded-full bg-bg-elevated flex items-center justify-center mb-3">
                   <CheckCircle2 size={24} className="text-text-secondary" />
                 </div>
-                <p className="text-text-primary font-medium">You're all caught up</p>
+                <p className="text-text-primary font-medium">You&apos;re all caught up</p>
                 <p className="text-sm text-text-secondary mt-1">No new notifications right now.</p>
               </div>
             ) : (

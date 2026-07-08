@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@omozoku/db';
 import { notifications, userNotificationReads } from '@omozoku/db/src/schema';
-import { eq, or, isNull, inArray } from 'drizzle-orm';
+import { eq, or, isNull } from 'drizzle-orm';
 import { auth } from '@/auth';
 
-export async function POST(request: NextRequest): Promise<NextResponse> {
+export async function POST(_request: NextRequest): Promise<NextResponse> {
   try {
     const session = await auth();
     const userId = session?.user?.id;
