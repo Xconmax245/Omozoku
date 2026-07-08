@@ -19,6 +19,10 @@ const nextConfig = {
         protocol: 'https',
         hostname: 'i.ytimg.com',
       },
+      {
+        protocol: 'https',
+        hostname: 'mydutbxfweiyncaubyzn.supabase.co',
+      },
     ],
   },
   // Transpile workspace packages

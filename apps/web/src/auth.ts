@@ -48,6 +48,25 @@ const nextAuth = NextAuth({
       }
     })
   ],
+  callbacks: {
+    async jwt({ token, user, trigger, session }) {
+      if (user) {
+        token.id = user.id;
+        token.image = user.image;
+      }
+      if (trigger === "update" && session?.image) {
+        token.image = session.image;
+      }
+      return token;
+    },
+    async session({ session, token }) {
+      if (token && session.user) {
+        session.user.id = token.id as string;
+        session.user.image = token.image as string | null;
+      }
+      return session;
+    }
+  }
 });
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const handlers: any = nextAuth.handlers;
