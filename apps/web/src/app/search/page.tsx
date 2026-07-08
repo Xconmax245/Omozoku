@@ -105,7 +105,7 @@ export default async function SearchPage({ searchParams }: { searchParams: { q?:
             <Flame className="text-score-red mb-4 animate-pulse opacity-80" size={48} />
             <h2 className="font-display mb-2 text-2xl font-bold text-white">Service Unavailable</h2>
             <p className="text-text-secondary max-w-md">
-              We couldn't fetch search results right now because the upstream anime provider
+              We couldn&apos;t fetch search results right now because the upstream anime provider
               (MyAnimeList) is experiencing downtime. Please try again later.
             </p>
           </div>

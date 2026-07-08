@@ -70,7 +70,7 @@ export async function WatchHero() {
 
           <div className="col-span-1 flex flex-col items-start space-y-8 md:col-span-4 md:items-end md:text-right">
             <p className="text-text-secondary font-body max-w-sm text-lg leading-relaxed md:text-xl">
-              You haven't watched anything yet on this device. Your history is stored securely in
+              You haven&apos;t watched anything yet on this device. Your history is stored securely in
               your browser.
             </p>
             <Link

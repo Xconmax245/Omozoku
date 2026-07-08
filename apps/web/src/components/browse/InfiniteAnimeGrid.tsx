@@ -100,7 +100,7 @@ export function InfiniteAnimeGrid() {
       <div className="py-32 flex flex-col items-center justify-center text-center px-4">
         <h3 className="text-2xl font-display font-bold text-white mb-2">No anime found</h3>
         <p className="text-text-secondary font-body max-w-md">
-          Try adjusting your filters to find what you're looking for.
+          Try adjusting your filters to find what you&apos;re looking for.
         </p>
       </div>
     );
@@ -141,7 +141,7 @@ export function InfiniteAnimeGrid() {
       
       {!hasNextPage && allAnime.length > 0 && (
         <div className="py-12 text-center text-text-secondary text-sm font-medium">
-          You've reached the end of the line.
+          You&apos;ve reached the end of the line.
         </div>
       )}
     </div>

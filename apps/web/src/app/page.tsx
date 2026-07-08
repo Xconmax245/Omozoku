@@ -2,9 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
 import { motion } from 'framer-motion';
-import { ArrowRight, Sparkles, PlayCircle } from 'lucide-react';
+import { Sparkles, PlayCircle } from 'lucide-react';
 import { AnimeGrid } from '@/components/AnimeGrid';
 import { FilterPills } from '@/components/FilterPills';
 import { FeaturedCarousel } from '@/components/FeaturedCarousel';

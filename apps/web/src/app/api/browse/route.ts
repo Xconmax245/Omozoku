@@ -8,6 +8,7 @@ export async function GET(req: NextRequest) {
   const { searchParams } = req.nextUrl;
   
   try {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const raw = await apiFetch<{ data: any[]; pagination: any }>(
       `https://api.jikan.moe/v4/anime?${searchParams.toString()}`,
       { provider: 'jikan' }
