@@ -14,9 +14,7 @@ import { UserProfileButton } from './UserProfileButton';
 const NAV_ITEMS = [
   { href: '/', icon: Home, label: 'Home' },
   { href: '/search', icon: Search, label: 'Search' },
-  { href: '/browse', icon: Compass, label: 'Browse' },
   { href: '/watchlist', icon: BookmarkCheck, label: 'Watchlist' },
-  { href: '/watch', icon: Tv2, label: 'Watch' },
 ];
 
 function useScrollDirection() {
