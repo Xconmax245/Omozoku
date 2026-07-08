@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
-// @ts-nocheck
 import NextAuth from "next-auth";
 import { DrizzleAdapter } from "@auth/drizzle-adapter";
 import { db, users } from "@omozoku/db";
@@ -7,10 +5,18 @@ import Credentials from "next-auth/providers/credentials";
 import { eq } from "drizzle-orm";
 import bcrypt from "bcryptjs";
 
+const authSecret = process.env.AUTH_SECRET;
+if (!authSecret) {
+  console.warn(
+    '[auth] ⚠️ AUTH_SECRET is not set. Using a fallback dev secret. This is INSECURE for production. ' +
+    'Set AUTH_SECRET in your .env.local file. Generate one with: openssl rand -hex 32'
+  );
+}
+
 const nextAuth = NextAuth({
-  secret: process.env.AUTH_SECRET || "fallback-dev-secret-1234567890",
+  secret: authSecret || "fallback-dev-secret-1234567890",
   adapter: DrizzleAdapter(db),
-  session: { strategy: "jwt" }, // Required for Credentials provider
+  session: { strategy: "jwt" },
   pages: {
     signIn: '/auth/signin',
   },
@@ -23,30 +29,41 @@ const nextAuth = NextAuth({
       },
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) return null;
-        
+
         const email = credentials.email as string;
         const password = credentials.password as string;
-        
-        const [existingUser] = await db.select().from(users).where(eq(users.email, email.toLowerCase())).limit(1);
-        
-        if (!existingUser || !existingUser.password) {
-          return null; // User not found or signed up via OAuth
-        }
 
-        const isValid = await bcrypt.compare(password, existingUser.password);
-        
-        if (!isValid) {
+        try {
+          const [existingUser] = await db
+            .select()
+            .from(users)
+            .where(eq(users.email, email.toLowerCase()))
+            .limit(1);
+
+          if (!existingUser || !existingUser.password) {
+            console.warn(`[auth] Login attempt for unknown email: ${email}`);
+            return null;
+          }
+
+          const isValid = await bcrypt.compare(password, existingUser.password);
+
+          if (!isValid) {
+            console.warn(`[auth] Invalid password attempt for: ${email}`);
+            return null;
+          }
+
+          return {
+            id: existingUser.id,
+            name: existingUser.name,
+            email: existingUser.email,
+            image: existingUser.image,
+          };
+        } catch (err) {
+          console.error(`[auth] Database error during login for ${email}:`, err);
           return null;
         }
-
-        return {
-          id: existingUser.id,
-          name: existingUser.name,
-          email: existingUser.email,
-          image: existingUser.image,
-        };
-      }
-    })
+      },
+    }),
   ],
   callbacks: {
     async jwt({ token, user, trigger, session }) {
@@ -65,9 +82,11 @@ const nextAuth = NextAuth({
         session.user.image = (token.image as string | null) || null;
       }
       return session;
-    }
-  }
+    },
+  },
 });
+
+// NextAuth v5 beta doesn't expose public types for these runtime properties.
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const handlers: any = nextAuth.handlers;
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
