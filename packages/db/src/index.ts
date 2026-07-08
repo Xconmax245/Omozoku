@@ -6,14 +6,14 @@ import * as schema from './schema';
 import { config } from 'dotenv';
 config({ path: '../../.env' });
 
-const connectionString = process.env.DATABASE_URL;
+const connectionString = process.env.DATABASE_URL || '';
 
 if (!connectionString) {
-  throw new Error('DATABASE_URL is missing in environment variables.');
+  console.warn('⚠️ DATABASE_URL is missing in environment variables. Using a dummy connection string for build time.');
 }
 
 // Disable prefetch as it is not supported for "Transaction" pool mode
-export const client = postgres(connectionString, { prepare: false });
+export const client = postgres(connectionString || 'postgres://postgres:postgres@localhost:5432/dummy', { prepare: false });
 export const db = drizzle(client, { schema });
 
 export * from './schema';
