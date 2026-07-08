@@ -61,8 +61,8 @@ const nextAuth = NextAuth({
     },
     async session({ session, token }) {
       if (token && session.user) {
-        session.user.id = token.id as string;
-        session.user.image = token.image as string | null;
+        session.user.id = (token.id || token.sub) as string;
+        session.user.image = (token.image as string | null) || null;
       }
       return session;
     }
