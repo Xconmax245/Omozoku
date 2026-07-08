@@ -4,10 +4,14 @@ import { db, users } from '@omozoku/db';
 import { eq } from 'drizzle-orm';
 import { auth } from '@/auth';
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
-
-const supabase = createClient(supabaseUrl, supabaseServiceKey);
+function getSupabase() {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!url || !key) {
+    throw new Error('Supabase environment variables missing.');
+  }
+  return createClient(url, key);
+}
 
 export async function POST(req: Request) {
   try {
@@ -35,6 +39,8 @@ export async function POST(req: Request) {
     // Generate unique filename
     const ext = file.name.split('.').pop();
     const filename = `${session.user.id}_${Date.now()}.${ext}`;
+
+    const supabase = getSupabase();
 
     const { error: uploadError } = await supabase.storage
       .from('avatars')
