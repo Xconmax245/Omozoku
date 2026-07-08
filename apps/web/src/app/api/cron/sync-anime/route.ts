@@ -42,13 +42,13 @@ export async function GET(req: Request) {
             ? 'New Episode Available' 
             : 'New Season Upcoming';
           const type = anime.status === 'Currently Airing' ? 'new_episode' : 'new_season';
-          const message = `${anime.title_english || anime.title} just got an update!`;
+          const body = `${anime.title_english || anime.title} just got an update!`;
 
           const inserts = userIds.map(userId => ({
             userId,
             type,
             title,
-            message,
+            body,
             metaData: {
               animeId,
               imageUrl: anime.images?.jpg?.large_image_url || anime.images?.jpg?.image_url
