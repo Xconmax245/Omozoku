@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import Image from 'next/image';
 import { Play, X } from 'lucide-react';
 
 interface NextEpisodeCardProps {
@@ -39,7 +40,7 @@ export function NextEpisodeCard({
       {/* Thumbnail */}
       <div className="w-20 aspect-video rounded-md bg-bg-elevated overflow-hidden shrink-0 relative">
         {posterUrl && (
-          <img src={posterUrl} alt="Poster" className="w-full h-full object-cover opacity-60" />
+          <Image src={posterUrl} alt="Poster" fill sizes="80px" className="object-cover opacity-60" />
         )}
         <div className="absolute inset-0 flex items-center justify-center">
           <Play size={20} className="text-white drop-shadow-md" fill="currentColor" />

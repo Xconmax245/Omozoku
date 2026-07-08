@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { Star, Play, Calendar } from 'lucide-react';
+import Image from 'next/image';
 import type { Anime } from '@omozoku/types';
 
 interface AnimeContextProps {
@@ -24,10 +25,12 @@ export function AnimeContext({ anime }: AnimeContextProps) {
       {/* Poster */}
       <div className="hidden md:block w-32 shrink-0">
         <div className="w-full aspect-poster rounded-lg overflow-hidden bg-bg-elevated relative">
-          <img 
+          <Image 
             src={anime.images.webp?.large || anime.images.jpg.large || ''} 
             alt={anime.title}
-            className="w-full h-full object-cover"
+            fill
+            sizes="128px"
+            className="object-cover"
           />
         </div>
       </div>
@@ -72,7 +75,7 @@ export function AnimeContext({ anime }: AnimeContextProps) {
         {/* Genres */}
         <div className="flex flex-wrap gap-2 mb-4 mt-2">
           {anime.genres.slice(0, 4).map((g) => (
-            <span key={g.mal_id} className="px-2 py-1 bg-bg-elevated text-text-primary text-xs font-bold rounded-md">
+            <span key={g.id} className="px-2 py-1 bg-bg-elevated text-text-primary text-xs font-bold rounded-md">
               {g.name}
             </span>
           ))}

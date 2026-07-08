@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface HeroBackdropProps {
@@ -39,10 +40,12 @@ export function HeroBackdrop({ images }: HeroBackdropProps) {
             transition={{ duration: 20, ease: "linear", repeat: Infinity, repeatType: "reverse" }}
             className="w-full h-full"
           >
-            <img 
+            <Image 
               src={images[currentIndex]} 
               alt="Backdrop" 
-              className="w-full h-full object-cover object-[center_15%] opacity-50"
+              fill
+              priority
+              className="object-cover object-[center_15%] opacity-50"
             />
           </motion.div>
         </motion.div>

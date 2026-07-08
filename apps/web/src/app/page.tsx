@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { AnimeGrid } from '@/components/AnimeGrid';
 import { FilterPills } from '@/components/FilterPills';
@@ -70,7 +71,9 @@ export default function HomePage() {
             className="text-5xl md:text-7xl font-display font-extrabold text-text-primary tracking-tight flex flex-col md:flex-row items-center justify-center gap-4"
           >
             <span>Welcome to</span>
-            <img src="/images/logo-wordmark.png" alt="OmoZoku" className="h-12 md:h-16 mt-2 md:mt-0 object-contain drop-shadow-[0_0_20px_rgba(255,45,85,0.4)]" />
+            <div className="relative h-12 md:h-16 w-[200px] mt-2 md:mt-0 drop-shadow-[0_0_20px_rgba(255,45,85,0.4)]">
+              <Image src="/images/logo-wordmark.png" alt="OmoZoku" fill className="object-contain" priority />
+            </div>
           </motion.h1>
           
           <motion.p 
