@@ -88,3 +88,13 @@ export const notifications = pgTable('notification', {
   metaData: jsonb('metaData'), // { animeId: 123, episodeNumber: 5, imageUrl: '...' }
   createdAt: timestamp('createdAt', { mode: 'date' }).defaultNow().notNull(),
 });
+
+export const watchProgress = pgTable('watch_progress', {
+  id: text('id').primaryKey().$defaultFn(() => crypto.randomUUID()),
+  userId: text('userId'), // Optional for unauthenticated users
+  sessionId: text('sessionId'), // Used for guest/unauthenticated viewers
+  animeId: integer('animeId').notNull(), // Jikan Anime ID
+  episode: integer('episode').notNull(),
+  secondsWatched: integer('secondsWatched').notNull().default(0),
+  updatedAt: timestamp('updatedAt', { mode: 'date' }).defaultNow().notNull(),
+});
