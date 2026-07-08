@@ -3,6 +3,7 @@ import { db, notifications } from "@omozoku/db";
 import { jikanGetAnime } from "@omozoku/api-clients";
 
 export const maxDuration = 300; // Allow Vercel to run this for up to 5 minutes
+export const dynamic = 'force-dynamic';
 
 export async function GET(req: Request) {
   try {
