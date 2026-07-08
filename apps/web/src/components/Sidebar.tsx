@@ -32,10 +32,10 @@ export function Sidebar() {
       {/* Logo */}
       <Link
         href="/"
-        className="mb-4 w-10 h-10 flex items-center justify-center select-none hover:opacity-80 transition-opacity"
+        className="mb-6 mt-2 w-14 h-14 flex items-center justify-center select-none hover:opacity-80 transition-transform hover:scale-105 active:scale-95"
         aria-label="OmoZoku home"
       >
-        <Image src="/images/logo.png" alt="OmoZoku" width={32} height={32} className="object-contain" priority />
+        <Image src="/images/logo.png" alt="OmoZoku" width={44} height={44} className="object-contain drop-shadow-sm" priority />
       </Link>
 
       {/* Nav items */}

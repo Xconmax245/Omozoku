@@ -96,7 +96,7 @@ export function MobileNav() {
         <div className="w-full flex items-center justify-between px-4 py-3 rounded-[24px] bg-[#121216]/45 backdrop-blur-[24px] border border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.1)]">
           {/* Left: Logo */}
           <Link href="/" className="flex items-center justify-center active:scale-95 transition-transform" onClick={() => setMenuOpen(false)}>
-            <Image src="/images/logo.png" alt="OmoZoku" width={32} height={32} className="object-contain" priority />
+            <Image src="/images/logo.png" alt="OmoZoku" width={40} height={40} className="object-contain drop-shadow-sm" priority />
           </Link>
 
           {/* Center: Empty breathing room */}

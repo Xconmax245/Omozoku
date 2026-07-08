@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react';
 import { signIn } from 'next-auth/react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
-import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -94,7 +93,7 @@ export default function SignInPageClient() {
       >
         <div className="flex flex-col items-center mb-8">
           <Link href="/" className="mb-6 hover:scale-105 transition-transform active:scale-95">
-            <Image src="/omozoku-logo.svg" alt="OmoZoku" width={48} height={48} className="w-12 h-12" />
+            <img src="/images/logo.png" alt="OmoZoku" className="h-16 w-auto object-contain drop-shadow-md" />
           </Link>
           <h1 className="text-3xl font-display font-extrabold text-white mb-2 tracking-tight">Welcome back</h1>
           <p className="text-text-secondary text-sm">Sign in to your OmoZoku account.</p>

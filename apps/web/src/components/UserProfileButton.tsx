@@ -72,16 +72,24 @@ export function UserProfileButton({ className, isMobile = false }: UserProfileBu
   if (!session) {
     if (isMobile) {
       return (
-        <OmoButton
-          asChild
-          variant="navbar"
-          className={`relative px-5 py-6 flex items-center justify-start gap-4 rounded-2xl h-auto w-full group text-white/80 font-medium hover:text-white hover:bg-white/5 ${className ?? ''}`}
-        >
-          <Link href="/auth/signin">
-            <User size={22} className="relative z-10 transition-transform group-hover:scale-110" />
-            <span className="relative z-10 font-body text-[15px] tracking-wide">Log In</span>
-          </Link>
-        </OmoButton>
+        <div className="flex flex-col gap-2">
+          <OmoButton
+            asChild
+            variant="navbar"
+            className={`relative px-5 py-6 flex items-center justify-start gap-4 rounded-2xl h-auto w-full group text-white/80 font-medium hover:text-white hover:bg-white/5 ${className ?? ''}`}
+          >
+            <Link href="/auth/signin">
+              <User size={22} className="relative z-10 transition-transform group-hover:scale-110" />
+              <span className="relative z-10 font-body text-[15px] tracking-wide">Log In</span>
+            </Link>
+          </OmoButton>
+          <div className="px-5 py-2 mt-2 text-xs font-body text-white/30 flex items-center gap-1.5">
+            <span>Made by</span>
+            <a href="https://x.com/0nyxexe" target="_blank" rel="noopener noreferrer" className="hover:text-white/60 transition-colors inline-flex items-center gap-0.5">
+              @0nyxexe ↗
+            </a>
+          </div>
+        </div>
       );
     }
 
@@ -133,6 +141,13 @@ export function UserProfileButton({ className, isMobile = false }: UserProfileBu
           <LogOut size={18} className="relative z-10" />
           <span className="text-[14px] tracking-wide">Sign Out</span>
         </OmoButton>
+
+        <div className="px-5 py-2 mt-2 text-xs font-body text-white/30 flex items-center gap-1.5">
+          <span>Made by</span>
+          <a href="https://x.com/0nyxexe" target="_blank" rel="noopener noreferrer" className="hover:text-white/60 transition-colors inline-flex items-center gap-0.5">
+            @0nyxexe ↗
+          </a>
+        </div>
       </div>
     );
   }
@@ -204,6 +219,14 @@ export function UserProfileButton({ className, isMobile = false }: UserProfileBu
                 <LogOut size={16} />
                 Sign Out
               </button>
+            </div>
+            
+            {/* Builder Credit */}
+            <div className="border-t border-border-subtle bg-bg-base/50 px-4 py-2.5 text-xs font-body text-text-secondary flex items-center justify-between">
+              <span>Made by</span>
+              <a href="https://x.com/0nyxexe" target="_blank" rel="noopener noreferrer" className="hover:text-text-primary transition-colors">
+                @0nyxexe ↗
+              </a>
             </div>
           </motion.div>
         )}

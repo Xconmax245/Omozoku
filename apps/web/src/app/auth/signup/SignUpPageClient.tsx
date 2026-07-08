@@ -3,7 +3,6 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -158,7 +157,7 @@ export default function SignUpPageClient() {
       >
         <div className="flex flex-col items-center mb-8">
           <Link href="/" className="mb-6 hover:scale-105 transition-transform active:scale-95">
-            <Image src="/omozoku-logo.svg" alt="OmoZoku" width={48} height={48} className="w-12 h-12" />
+            <img src="/images/logo.png" alt="OmoZoku" className="h-16 w-auto object-contain drop-shadow-md" />
           </Link>
           <h1 className="text-3xl font-display font-extrabold text-white mb-2 tracking-tight">Create your account</h1>
           <p className="text-text-secondary text-sm">Join the tribe and build your watchlist.</p>
