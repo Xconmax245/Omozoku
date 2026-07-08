@@ -164,10 +164,10 @@ export default function HomePage() {
           
           <div className="max-w-xl relative z-10 text-center md:text-left">
             <h2 className="text-2xl md:text-3xl font-display font-extrabold text-text-primary mb-3">
-              Support the Tribe
+              Support the Creator
             </h2>
             <p className="text-text-secondary font-body leading-relaxed">
-              OmoZoku is a solo-built, entirely free sanctuary for anime fans. If you love what I&apos;m building, the absolute best way to support future development and new features is to follow along on X.
+              Yo, I&apos;m NYX!! and I build OmoZoku entirely solo. No corporate backing, no paywalls, just a passion project for the community. If you&apos;re vibing with the site and want to support its future, dropping a follow on X is the best way to do it. It means a lot!
             </p>
           </div>
           
