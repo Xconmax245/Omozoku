@@ -10,6 +10,7 @@ interface NextEpisodeCardProps {
   nextEpisode: number;
   posterUrl?: string;
   countdownStart?: number;
+  autoPlay?: boolean;
   onCancel: () => void;
   onNext: () => void;
 }
@@ -19,12 +20,15 @@ export function NextEpisodeCard({
   nextEpisode, 
   posterUrl, 
   countdownStart = 15,
+  autoPlay = true,
   onCancel,
   onNext 
 }: NextEpisodeCardProps) {
   const [timeLeft, setTimeLeft] = useState(countdownStart);
 
   useEffect(() => {
+    if (!autoPlay) return;
+    
     if (timeLeft <= 0) {
       onNext();
       return;
@@ -33,7 +37,7 @@ export function NextEpisodeCard({
       setTimeLeft(prev => prev - 1);
     }, 1000);
     return () => clearInterval(timer);
-  }, [timeLeft, onNext]);
+  }, [timeLeft, onNext, autoPlay]);
 
   return (
     <div className="absolute bottom-24 right-4 md:bottom-28 md:right-8 z-50 bg-bg-surface/95 backdrop-blur-md border border-border-subtle rounded-xl p-3 shadow-2xl flex items-center gap-4 animate-in slide-in-from-right-8 fade-in duration-300 w-[300px]">
@@ -50,7 +54,7 @@ export function NextEpisodeCard({
       {/* Info */}
       <div className="flex-1 min-w-0">
         <div className="text-xs text-text-secondary font-bold uppercase tracking-wider mb-0.5">
-          Up Next in {timeLeft}s
+          {autoPlay ? `Up Next in ${timeLeft}s` : 'Up Next'}
         </div>
         <div className="text-sm font-display font-extrabold text-text-primary truncate">
           Episode {nextEpisode}
@@ -62,22 +66,34 @@ export function NextEpisodeCard({
 
       {/* Actions */}
       <div className="flex flex-col gap-2 border-l border-border-subtle pl-3 ml-1 shrink-0">
-        <button 
-          onClick={onCancel}
-          className="p-1.5 rounded-full hover:bg-bg-elevated text-text-secondary hover:text-text-primary transition-colors"
-          title="Cancel Autoplay"
-        >
-          <X size={16} />
-        </button>
+        {autoPlay ? (
+          <button 
+            onClick={onCancel}
+            className="p-1.5 rounded-full hover:bg-bg-elevated text-text-secondary hover:text-text-primary transition-colors"
+            title="Cancel Autoplay"
+          >
+            <X size={16} />
+          </button>
+        ) : (
+          <button 
+            onClick={onNext}
+            className="p-1.5 rounded-full hover:bg-accent/20 text-accent transition-colors"
+            title="Play Next Episode"
+          >
+            <Play size={16} fill="currentColor" />
+          </button>
+        )}
       </div>
       
       {/* Progress Bar */}
-      <div className="absolute bottom-0 left-0 right-0 h-1 bg-bg-elevated rounded-b-xl overflow-hidden">
-        <div 
-          className="h-full bg-accent transition-all duration-1000 ease-linear"
-          style={{ width: `${(timeLeft / countdownStart) * 100}%` }}
-        />
-      </div>
+      {autoPlay && (
+        <div className="absolute bottom-0 left-0 right-0 h-1 bg-bg-elevated rounded-b-xl overflow-hidden">
+          <div 
+            className="h-full bg-accent transition-all duration-1000 ease-linear"
+            style={{ width: `${(timeLeft / countdownStart) * 100}%` }}
+          />
+        </div>
+      )}
     </div>
   );
 }

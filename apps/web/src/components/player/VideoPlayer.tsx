@@ -10,6 +10,7 @@ import { useGestures } from '../../hooks/useGestures';
 import { Controls } from './Controls';
 import { SubtitleRenderer } from './SubtitleRenderer';
 import { NextEpisodeCard } from './NextEpisodeCard';
+import { useSettingsStore } from '@/stores/settingsStore';
 
 interface VideoPlayerProps {
   watchResponse: WatchResponse;
@@ -32,6 +33,8 @@ export default function VideoPlayer({
   const [showControls, setShowControls] = useState(true);
   const controlsTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
+  const { autoplay, skipIntro: autoSkipIntro } = useSettingsStore();
+
   const [activeSubtitle, setActiveSubtitle] = useState(-1);
   const [subtitleOffset, setSubtitleOffset] = useState(0);
 
@@ -39,6 +42,7 @@ export default function VideoPlayer({
   const [hasCheckedResume, setHasCheckedResume] = useState(false);
 
   const [nextEpisodeCanceled, setNextEpisodeCanceled] = useState(false);
+  const hasAutoSkippedIntro = useRef(false);
 
   // Check resume progress on mount
   useEffect(() => {
@@ -84,6 +88,14 @@ export default function VideoPlayer({
 
   const showSkipIntro = intro && currentTime >= intro.start && currentTime <= intro.end;
   const showSkipOutro = outro && currentTime >= outro.start && currentTime <= outro.end;
+
+  // Auto-skip intro logic
+  useEffect(() => {
+    if (autoSkipIntro && showSkipIntro && !hasAutoSkippedIntro.current && intro) {
+      controls.seek(intro.end);
+      hasAutoSkippedIntro.current = true;
+    }
+  }, [autoSkipIntro, showSkipIntro, intro, controls]);
 
   const showNextEpisodeCard = Boolean(
     onNextEpisode && 
@@ -260,6 +272,7 @@ export default function VideoPlayer({
               nextEpisode={episode + 1}
               posterUrl={posterUrl}
               countdownStart={15}
+              autoPlay={autoplay}
               onCancel={() => setNextEpisodeCanceled(true)}
               onNext={onNextEpisode}
             />

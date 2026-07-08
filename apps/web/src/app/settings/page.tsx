@@ -6,6 +6,7 @@ import { useEffect, useState, useRef } from 'react';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowLeft, Settings, Shield, Sliders, Monitor, ChevronDown, Check } from 'lucide-react';
+import { useSettingsStore } from '@/stores/settingsStore';
 
 function QualitySelector({ value, onChange }: { value: string; onChange: (val: string) => void }) {
   const [isOpen, setIsOpen] = useState(false);
@@ -78,10 +79,12 @@ export default function SettingsPage() {
   const router = useRouter();
 
   // Settings State
-  const [quality, setQuality] = useState('1080p');
-  const [autoplay, setAutoplay] = useState(true);
-  const [skipIntro, setSkipIntro] = useState(false);
-  const [saveProgress, setSaveProgress] = useState(true);
+  const { quality, autoplay, skipIntro, saveProgress, setSettings } = useSettingsStore();
+
+  const setQuality = (val: string) => setSettings({ quality: val });
+  const setAutoplay = () => setSettings({ autoplay: !autoplay });
+  const setSkipIntro = () => setSettings({ skipIntro: !skipIntro });
+  const setSaveProgress = () => setSettings({ saveProgress: !saveProgress });
 
   useEffect(() => {
     if (status === 'unauthenticated') {
@@ -136,7 +139,7 @@ export default function SettingsPage() {
                   <p className="text-xs text-text-secondary">Start the next episode immediately after the current one ends.</p>
                 </div>
                 <button
-                  onClick={() => setAutoplay(p => !p)}
+                  onClick={setAutoplay}
                   className={`w-11 h-6 rounded-full transition-all relative ${autoplay ? 'bg-accent' : 'bg-white/10'}`}
                 >
                   <div className={`w-4 h-4 rounded-full bg-white absolute top-1 transition-all ${autoplay ? 'left-6' : 'left-1'}`} />
@@ -149,7 +152,7 @@ export default function SettingsPage() {
                   <p className="text-xs text-text-secondary">Bypass title screens and endings automatically.</p>
                 </div>
                 <button
-                  onClick={() => setSkipIntro(p => !p)}
+                  onClick={setSkipIntro}
                   className={`w-11 h-6 rounded-full transition-all relative ${skipIntro ? 'bg-accent' : 'bg-white/10'}`}
                 >
                   <div className={`w-4 h-4 rounded-full bg-white absolute top-1 transition-all ${skipIntro ? 'left-6' : 'left-1'}`} />
@@ -190,7 +193,7 @@ export default function SettingsPage() {
                   <p className="text-xs text-text-secondary">Share watch progression with OmoZoku servers to enable device-sync.</p>
                 </div>
                 <button
-                  onClick={() => setSaveProgress(p => !p)}
+                  onClick={setSaveProgress}
                   className={`w-11 h-6 rounded-full transition-all relative ${saveProgress ? 'bg-accent' : 'bg-white/10'}`}
                 >
                   <div className={`w-4 h-4 rounded-full bg-white absolute top-1 transition-all ${saveProgress ? 'left-6' : 'left-1'}`} />

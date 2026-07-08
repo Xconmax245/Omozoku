@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import type { StreamSource } from '@omozoku/types';
 import type Hls from 'hls.js';
+import { useSettingsStore } from '@/stores/settingsStore';
 
 interface UsePlayerProps {
   sources: StreamSource[];
@@ -15,9 +16,16 @@ export function usePlayer({ sources, referer, animeId, episode, initialTime = 0,
   const videoRef = useRef<HTMLVideoElement>(null);
   const hlsRef = useRef<Hls | null>(null);
   const progressTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  
+  const preferredQuality = useSettingsStore(state => state.quality);
+  const shouldSaveProgress = useSettingsStore(state => state.saveProgress);
 
   // Sort sources by quality initially
   const sortedSources = [...sources].sort((a, b) => {
+    // If one matches the preferred quality, prioritize it
+    if (a.quality === preferredQuality) return -1;
+    if (b.quality === preferredQuality) return 1;
+
     const order: Record<string, number> = { '1080p': 0, '720p': 1, '480p': 2, '360p': 3, auto: 4 };
     return (order[a.quality] ?? 5) - (order[b.quality] ?? 5);
   });
@@ -48,6 +56,7 @@ export function usePlayer({ sources, referer, animeId, episode, initialTime = 0,
 
   // Save progress logic
   const saveProgress = useCallback(async (time: number) => {
+    if (!shouldSaveProgress) return;
     // Only save if meaningful
     if (time < 5) return;
     try {
