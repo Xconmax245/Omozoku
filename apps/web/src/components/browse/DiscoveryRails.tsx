@@ -40,7 +40,7 @@ const getHiddenGems = unstable_cache(
   async (): Promise<Anime[]> => {
     // We'll fetch top score.
     const top = await jikanGetTopAnime(1, 'favorite');
-    return top.data.filter((a: { members?: number; [key: string]: unknown }) => (a.members || 0) < 200000).slice(0, 12).map(transformAnime);
+    return top.data.filter((a) => (a.members || 0) < 200000).slice(0, 12).map(transformAnime);
   },
   ['jikan-hidden-gems'],
   { revalidate: 3600 * 24 * 7 } // 1 week TTL
